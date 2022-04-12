@@ -1,3 +1,16 @@
+/* ------------------------------------------------------------------------
+   Kyle AuBuchon & Juan Gonzalez
+   phase3
+   Applied Technology
+   College of Applied Science and Technology
+   The University of Arizona
+   CSCV 452
+   ------------------------------------------------------------------------ */\
+#include <stdlib.h>
+#include <usyscall.h>
+#include <string.h>
+#include <libuser.h>
+
 #include <usloss.h>
 #include <phase1.h>
 #include <phase2.h>
