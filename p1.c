@@ -9,3 +9,11 @@ p1_switch(int old, int new)
 void
 p1_quit(int pid)
 {}
+
+void
+startup()
+{}
+
+void
+finish()
+{}

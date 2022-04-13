@@ -21,6 +21,7 @@ int start2(char *);
 int  spawn_real(char *name, int (*func)(char *), char *arg,
                 int stack_size, int priority);
 int  wait_real(int *status);
+
 /* Phase 3 -- User Function Prototypes */
 extern int Spawn(char *name, int (*func)(char *), char *arg,
                  int stack_size, int priority, int *pid);
@@ -50,6 +51,7 @@ extern int getPID_real(int *pid);
 extern int start3(char *arg);
 
 void check_kernel_mode(char * proc);
+
 /* Global Data Structs */
 
 ProcessTable procTable[MAXPROC]; 
@@ -116,4 +118,50 @@ void check_kernel_mode(char * proc) {
         console("check_kernel_mode(): called while in user mode by process %s. Halting...\n", proc);
         halt(1);
     }
+}
+/* --------------------------------------------------------------------------------
+   Name - Spawn
+   Purpose - Create user level process
+   Parameters - arg1 - address of function to spawn
+                arg2 - parameter passed to spawned functions
+                arg3 - stack size in bytes
+                arg4 - priority
+                arg5 - characters string containing process's name
+   Returns -    arg1 - PID of newly created process; -1 if process could not be completed
+                arg4 - -1 if illegal values, 0 otherwise
+   Side Effects -  if system is in usermode, print appropriate error and halt.
+   -------------------------------------------------------------------------------- */
+static void spawn(sysargs *args_ptr){
+    /*
+    int (*func)(char *);
+    char *arg;
+    int stack_size;
+    int pid;
+
+    if (is_zapped() ){//should terminate proc}
+
+    func = args_ptr -> arg1;
+    arg = args_ptr -> arg2;
+    stack_size = (int) args_ptr -> arg3;
+    //more code to extract system call arguments as well as exception handling
+    if ((long) args->number != SYS_SPAWN){
+		args->arg4 = (void *) -1;
+		return;
+	}
+
+	if ((long) args->arg3 < USLOSS_MIN_STACK){
+		args->arg4 = (void *) -1;
+		return;
+	}
+	if ((long) args->arg4 > MINPRIORITY || (long) args->arg4 < MAXPRIORITY){
+		args->arg4 = (void *) -1;
+		return;
+	}
+
+	pid = spawn_real((char *) args->arg5, args->arg1, args->arg2,
+			         (long) args->arg3,(long) args->arg4);
+    //call another function to modularize the code better
+    kid_pid = spawn_real(name, func, arg, stack_size, priority);
+    args_ptr
+    */
 }
