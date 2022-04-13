@@ -1,10 +1,11 @@
-/*
- *  sems.h
- *
- *  Brady Robles
- *  April 10, 2020
- *  CSCV 452 The Kernel Phase 3
- */
+/* ------------------------------------------------------------------------
+   Kyle AuBuchon & Juan Gonzalez
+   phase3
+   Applied Technology
+   College of Applied Science and Technology
+   The University of Arizona
+   CSCV 452
+   ------------------------------------------------------------------------ */
 
 #ifndef PHASE_3_SEMS_H_
 #define PHASE_3_SEMS_H_

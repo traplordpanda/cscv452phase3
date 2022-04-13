@@ -18,12 +18,12 @@ TESTS= test00 test01 test02 test03 test04 test05 test06 test07 test08 \
 
 # Use one of the following LIBS lines, depending on whose phase1/2 you are using
 # lxu’s phase2 and phase1
-LIBS = -llxuphase2 -llxuphase1 -lusloss -llxuphase1\
-       -llxuphase2 -lphase3 
+LIBS = -l452phase2 -l452phase1  -lusloss -lphase3 
 # Your phase1 and your phase2
 #LIBS = -lphase2 -lphase1 -lusloss -luser 
 
-
+all: test00 test01 test02 test03 test10 test11 test12 test13 test14 \
+     test15 test17 test18 test19 test21 test22 test23 test24 test25 
 
 $(TARGET):	$(COBJS)
 		$(AR) -r $@ $(COBJS) 

@@ -15,25 +15,69 @@
 #include <phase1.h>
 #include <phase2.h>
 #include <phase3.h>
+#include <sems.h>
 
 int start2(char *); 
 int  spawn_real(char *name, int (*func)(char *), char *arg,
                 int stack_size, int priority);
 int  wait_real(int *status);
-int
-start2(char *arg)
+/* Phase 3 -- User Function Prototypes */
+extern int Spawn(char *name, int (*func)(char *), char *arg,
+                 int stack_size, int priority, int *pid);
+
+extern int Wait(int *pid, int *status);
+extern void Terminate(int status);
+extern void GetTimeofDay(int *tod);
+extern void CPUTime(int *cpu);
+extern void getPID(int *pid);
+extern int SemCreate(int value, int *semaphore);
+extern int SemP(int semaphore);
+extern int Semv(int semaphore);
+extern int SemFree(int semaphore);
+
+extern int spawn_real(char *name, int (*func)(char *), char *arg,
+                      int stack_size, int priority);
+
+extern int wait_real(int *status);
+extern void terminate_real(int exit_code);
+extern int semcreate_real(int init_value);
+extern int semp_real(int semaphore);
+extern int semv_real(int semaphore);
+extern int semfree_real(int semaphore);
+extern int gettimeofday_real(int *time);
+extern int cputime_real(int *time);
+extern int getPID_real(int *pid);
+extern int start3(char *arg);
+
+void check_kernel_mode(char * proc);
+/* Global Data Structs */
+
+ProcessTable procTable[MAXPROC]; 
+
+/* Global Data Structs */
+int start2(char *arg)
 {
     int		pid;
     int		status;
     /*
      * Check kernel mode here.
      */
+    check_kernel_mode("start2\n");
 
     /*
      * Data structure initialization as needed...
+     * Init proc table as EMPTY 
      */
+    for (int i = 0; i < MAXPROC; i++){
+		procTable[i].status = EMPTY;
+	}
 
-
+    /* Init Sys Call Handler*/
+    for (int i = 0; i < MAXSYSCALLS; i++)
+    {
+        sys_vec[i] = NULL;
+    }
+    
     /*
      * Create first user-level process and wait for it to finish.
      * These are lower-case because they are not system calls;
@@ -67,3 +111,9 @@ start2(char *arg)
 
 } /* start2 */
 
+void check_kernel_mode(char * proc) {
+    if ((PSR_CURRENT_MODE & psr_get()) == 0) {
+        console("check_kernel_mode(): called while in user mode by process %s. Halting...\n", proc);
+        halt(1);
+    }
+}
