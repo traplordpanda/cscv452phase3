@@ -48,8 +48,14 @@ void cpuTime(sysargs * args);
 void set_user_mode();
 void check_kernel_mode(char * proc);
 
+void semCreate(sysargs * args);
+int semCreateReal(int value);
+void initProcQueue(procQueue * q, int type);
+
 /* Global Data */
+semaphore semTable[MAXSEMS];
 ProcessTable procTable[MAXPROC];
+int semCount;
 /* Global Data */
 
 /* 
@@ -110,6 +116,11 @@ int start2(char * arg) {
     sys_vec[SYS_GETPID] = getPID;
     sys_vec[SYS_GETTIMEOFDAY] = getTimeOfDay;
     sys_vec[SYS_CPUTIME] = cpuTime;
+
+    sys_vec[SYS_SEMCREATE] = semCreate;
+    //sys_vec[SYS_SEMP] = semp;
+    //sys_vec[SYS_SEMV] = semv;
+    //sys_vec[SYS_SEMFREE] = semFree;
 
     pid = spawn_real("start3", start3, NULL, 4 * USLOSS_MIN_STACK, 3);
     //check pid value
@@ -389,4 +400,58 @@ void removeChildFromList(ProcessTablePtr proc) {
         }
         temp -> nextSiblingPtr = temp -> nextSiblingPtr -> nextSiblingPtr;
     }
+}
+
+void semCreate(sysargs * args) {
+    check_kernel_mode("semCreate()");
+
+    int value = (long) args -> arg1;
+
+    if (value < 0 || semCount == MAXSEMS) {
+        args -> arg4 = (void * )(long) - 1;
+    } else {
+        semCount++;
+        int handle = semCreateReal(value);
+        args -> arg1 = (void * )(long) handle;
+        args -> arg4 = 0;
+    }
+
+    if (is_zapped()) {
+        Terminate(0);
+    } else {
+        set_user_mode();
+    }
+} /*  semCreate */
+
+/* semCreateReal */
+int semCreateReal(int value) {
+    check_kernel_mode("semCreateReal()");
+
+    int priv_mboxID = MboxCreate(value, 0);
+    int mutex_mboxID = MboxCreate(1, 0);
+
+    MboxSend(mutex_mboxID, NULL, 0);
+
+    /*fix better loop implementation*/
+    int count = 0;
+    for (int i = 0; i < MAXSEMS; i++) {
+        if (semTable[i].id == -1) {
+            count = i;
+            semTable[i].id = i;
+            semTable[i].value = value;
+            semTable[i].start = value;
+            semTable[i].priv_mboxID = priv_mboxID;
+            semTable[i].mutex_mboxID = mutex_mboxID;
+            initProcQueue( & semTable[i].blocked, 0);
+            break;
+        }
+    }
+}
+
+void initProcQueue(procQueue * q, int type) {
+
+    q -> head = NULL;
+    q -> tail = NULL;
+    q -> size = 0;
+    q -> type = type;
 }
