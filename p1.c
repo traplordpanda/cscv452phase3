@@ -1,3 +1,4 @@
+#include "usloss.h"
 void
 p1_fork(int pid)
 {}
@@ -10,10 +11,3 @@ void
 p1_quit(int pid)
 {}
 
-void
-startup()
-{}
-
-void
-finish()
-{}
